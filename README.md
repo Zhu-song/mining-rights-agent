@@ -1,0 +1,1 @@
+# mining-rights-agent
