@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  mining-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mining-rights-agent
+    environment:
+      - PYTHONUNBUFFERED=1
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    volumes:
+      - .:/app
+    command: ["python", "-c", "from agent.main import run_agent; import asyncio; asyncio.run(run_agent('给我生成一份关于 Pilbara 锂矿的今日简报'))"]

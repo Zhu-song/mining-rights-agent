@@ -1,0 +1,63 @@
+{
+  "name": "MiningRightsDailyAgent",
+  "description": "矿权日报 Agent - 基于 MCP 协议的矿业新闻、储量数据和价格走势聚合工具",
+  "version": "1.0.0",
+  "servers": [
+    {
+      "name": "NewsServer",
+      "description": "新闻摘要服务 - 获取矿业公司新闻和政策更新",
+      "command": "python",
+      "args": ["servers/news_server.py"],
+      "transport": "stdio"
+    },
+    {
+      "name": "ReservesServer",
+      "description": "储量数据服务 - 获取矿业公司储量信息和资源报告",
+      "command": "python",
+      "args": ["servers/reserves_server.py"],
+      "transport": "stdio"
+    },
+    {
+      "name": "PriceServer",
+      "description": "价格走势服务 - 获取矿产品价格数据和走势分析",
+      "command": "python",
+      "args": ["servers/price_server.py"],
+      "transport": "stdio"
+    }
+  ],
+  "tools": [
+    {
+      "name": "fetch_mining_news",
+      "description": "获取指定矿业公司的最新新闻摘要",
+      "server": "NewsServer"
+    },
+    {
+      "name": "search_policy_updates",
+      "description": "搜索指定国家和矿种的政策更新",
+      "server": "NewsServer"
+    },
+    {
+      "name": "get_reserves_data",
+      "description": "获取矿业公司的储量数据",
+      "server": "ReservesServer"
+    },
+    {
+      "name": "get_resource_report",
+      "description": "获取公司最新的资源报告摘要",
+      "server": "ReservesServer"
+    },
+    {
+      "name": "get_price_trend",
+      "description": "获取矿产品价格走势",
+      "server": "PriceServer"
+    },
+    {
+      "name": "get_price_comparison",
+      "description": "对比多种矿产品价格",
+      "server": "PriceServer"
+    }
+  ],
+  "environment": {
+    "ANTHROPIC_API_KEY": ""
+  }
+}
