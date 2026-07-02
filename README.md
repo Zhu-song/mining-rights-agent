@@ -136,7 +136,9 @@ mining-rights-agent/
 │   ├── reserves_server.py  # 储量数据服务
 │   └── price_server.py     # 价格走势服务
 ├── test_mcp.py         # MCP Server 测试脚本
-├── docker-compose.yml  # Docker Compose 配置（待完善）
+├── docker-compose.yml  # Docker Compose 配置
+├── Dockerfile          # Docker 镜像构建文件
+├── .dockerignore       # Docker 构建忽略文件
 ├── pyproject.toml      # Python 项目配置
 ├── .env.example        # 环境变量模板
 └── .venv/              # Python 虚拟环境
@@ -189,12 +191,54 @@ python -m agent.main "给我生成一份关于 Newmont 金矿的今日简报"
 python -m agent.main "给我生成一份关于 Barrick Gold 的今日简报"
 ```
 
-## 🐳 Docker（待完善）
+## 🐳 Docker 部署
 
-当前 `docker-compose.yml` 引用了尚不存在的 `Dockerfile`，Docker 部署功能正在开发中。
-
-如需使用 Docker，需先创建 `Dockerfile` 文件，然后运行：
+### 使用默认查询启动
 
 ```bash
+cd mining-rights-agent
 docker-compose up --build
 ```
+
+### 使用自定义查询
+
+```bash
+docker-compose run --rm mining-agent "给我生成一份关于 Newmont 金矿的今日简报"
+```
+
+### 使用增强模式（配置 API Key）
+
+```bash
+cp .env.example .env
+# 编辑 .env 文件，填入 Anthropic API Key
+docker-compose up --build
+```
+
+### 直接使用 Docker 命令
+
+```bash
+docker build -t mining-rights-agent .
+docker run --rm mining-rights-agent "给我生成一份关于 Barrick Gold 的今日简报"
+```
+
+### Dockerfile 说明
+
+```dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY pyproject.toml .
+COPY agent/ ./agent/
+COPY servers/ ./servers/
+
+RUN pip install --no-cache-dir -e .
+
+ENTRYPOINT ["python", "-m", "agent.main"]
+```
+
+### docker-compose.yml 说明
+
+- 使用 `env_file` 加载环境变量
+- 默认执行 Pilbara 锂矿简报查询
+- 通过 `docker-compose run` 可传入自定义查询参数
